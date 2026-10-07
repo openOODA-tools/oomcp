@@ -1,0 +1,26 @@
+// # Text Processing and Query Tool Schemas
+//
+// Logline: Generates Model Context Protocol JSON schema definitions for text and data manipulation.
+//
+// Setup: Pure string builders generating valid JSON schema blocks.
+//
+// Beats:
+//   1. Define grep_pattern schema for high-throughput regex search.
+//   2. Define jq_query schema for recursive JSON transformation and extraction.
+//   3. Define stream_edit and fuzzy_match schemas for text transforms and filtering.
+
+pub fn schema_grep_pattern() -> String {
+    return "{\"name\":\"grep_pattern\",\"description\":\"Search files for regex or literal patterns with line numbers\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"pattern\":{\"type\":\"string\",\"description\":\"Pattern or regex string to match\"},\"path\":{\"type\":\"string\",\"description\":\"File or directory path to search\"},\"recursive\":{\"type\":\"boolean\",\"description\":\"Search recursively\"},\"ignore_case\":{\"type\":\"boolean\",\"description\":\"Case-insensitive matching\"}},\"required\":[\"pattern\",\"path\"]}}";
+}
+
+pub fn schema_jq_query() -> String {
+    return "{\"name\":\"jq_query\",\"description\":\"Transform and extract JSON data using pure openOODA expressions\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"json_data\":{\"type\":\"string\",\"description\":\"Input JSON payload string\"},\"filter\":{\"type\":\"string\",\"description\":\"jq filter expression, e.g. .items[].name\"}},\"required\":[\"json_data\",\"filter\"]}}";
+}
+
+pub fn schema_stream_edit() -> String {
+    return "{\"name\":\"stream_edit\",\"description\":\"Perform stream text replacement or regex substitution\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"text\":{\"type\":\"string\",\"description\":\"Input text content\"},\"pattern\":{\"type\":\"string\",\"description\":\"Search pattern to replace\"},\"replacement\":{\"type\":\"string\",\"description\":\"Replacement string\"}},\"required\":[\"text\",\"pattern\",\"replacement\"]}}";
+}
+
+pub fn schema_fuzzy_match() -> String {
+    return "{\"name\":\"fuzzy_match\",\"description\":\"Score and filter candidate items using fuzzy match algorithms\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Search query string\"},\"candidates\":{\"type\":\"string\",\"description\":\"Newline-delimited list of candidates\"}},\"required\":[\"query\",\"candidates\"]}}";
+}

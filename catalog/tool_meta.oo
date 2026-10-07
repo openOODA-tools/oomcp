@@ -1,0 +1,33 @@
+// # Tool Metadata Records and Classification
+//
+// Logline: Defines structural records representing registered sovereign openOODA tools.
+//
+// Setup: Standalone record definitions with field accessors.
+//
+// Beats:
+//   1. Define ToolMeta record capturing tool properties, descriptions, and categories.
+//   2. Provide constructor helper for building tool metadata entries.
+//   3. Provide serialization helper for dumping metadata to JSON-compatible strings.
+
+pub type ToolMeta = struct {
+    name: String,
+    bin_name: String,
+    description: String,
+    category: String,
+    installed: Bool
+};
+
+pub fn make_tool_meta(name: String, bin_name: String, desc: String, cat: String, inst: Bool) -> ToolMeta {
+    return ToolMeta {
+        name: name,
+        bin_name: bin_name,
+        description: desc,
+        category: cat,
+        installed: inst
+    };
+}
+
+pub fn tool_meta_to_json(m: ToolMeta) -> String {
+    let inst_str: String = if m.installed { "true" } else { "false" };
+    return "{\"name\":\"" + m.name + "\",\"bin\":\"" + m.bin_name + "\",\"description\":\"" + m.description + "\",\"category\":\"" + m.category + "\",\"installed\":" + inst_str + "}";
+}

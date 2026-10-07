@@ -1,0 +1,24 @@
+// # Root Namespace Anchor for oomcp
+//
+// Logline: Consolidates domain module anchors into unified sovereign gateway exports.
+//
+// Setup: Imports all primary sub-packages under the oomcp tree.
+//
+// Beats:
+//   1. Expose versioning metadata to root consumers.
+//   2. Re-export catalog discovery, IPC protocol, sys runner, and UI rendering modules.
+//   3. Provide package identity anchor for cross-module symbol resolution.
+
+import "version.oo";
+import "catalog/anchor.oo";
+import "ipc/anchor.oo";
+import "render/anchor.oo";
+import "sys/anchor.oo";
+
+pub fn oomcp_pkg_id() -> String {
+    return "org.openooda.oomcp";
+}
+
+pub fn oomcp_ready() -> Bool {
+    return true;
+}

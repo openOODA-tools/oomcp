@@ -1,0 +1,16 @@
+// # System Domain Anchor for oomcp
+//
+// Logline: Consolidates host execution and capability delegation primitives.
+//
+// Setup: Demands &ProcessCap for process interactions.
+//
+// Beats:
+//   1. Re-export child process execution helpers.
+//   2. Provide unified system execution gateway.
+//   3. Maintain isolated boundary between JSON-RPC decoding and OS spawning.
+
+import "sys/exec_route.oo";
+
+pub fn sys_ready() -> Bool {
+    return true;
+}

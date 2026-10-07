@@ -1,0 +1,117 @@
+// # Tool Call Dispatcher and Command Router
+//
+// Logline: Decodes tool arguments and delegates execution to sovereign openOODA backend binaries.
+//
+// Setup: Demands &ProcessCap to execute child binaries under process policy.
+//
+// Beats:
+//   1. Match tool_name to registered openOODA tool capabilities.
+//   2. Extract typed parameters from JSON arguments dictionary.
+//   3. Dispatch execution to child process and return normalized standard output text.
+
+import "ipc/json_field.oo";
+import "ipc/mcp_frame.oo";
+import "sys/exec_route.oo";
+
+pub fn dispatch_tool_call(proc: &ProcessCap, id: String, tool_name: String, args: String) -> String {
+    if tool_name == "diff_files" {
+        let pa: String = json_field_string(args, "path_a");
+        let pb: String = json_field_string(args, "path_b");
+        if chars_len(pa) == 0 || chars_len(pb) == 0 {
+            return build_error(id, -32602, "missing path_a or path_b");
+        }
+        let out: String = sys_exec_safe(proc, "oodiff " + pa + " " + pb);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "diff_dirs" {
+        let da: String = json_field_string(args, "dir_a");
+        let db: String = json_field_string(args, "dir_b");
+        if chars_len(da) == 0 || chars_len(db) == 0 {
+            return build_error(id, -32602, "missing dir_a or dir_b");
+        }
+        let out: String = sys_exec_safe(proc, "oodiff -r " + da + " " + db);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "grep_pattern" {
+        let pat: String = json_field_string(args, "pattern");
+        let pth: String = json_field_string(args, "path");
+        if chars_len(pat) == 0 || chars_len(pth) == 0 {
+            return build_error(id, -32602, "missing pattern or path");
+        }
+        let out: String = sys_exec_safe(proc, "oogrep -n '" + pat + "' " + pth);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "find_files" {
+        let root: String = json_field_string(args, "root");
+        let pat: String = json_field_string(args, "pattern");
+        let target_root: String = if chars_len(root) > 0 { root } else { "." };
+        let cmd: String = if chars_len(pat) > 0 { "oofind " + target_root + " -name '" + pat + "'" } else { "oofind " + target_root };
+        let out: String = sys_exec_safe(proc, cmd);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "view_file" {
+        let pth: String = json_field_string(args, "path");
+        if chars_len(pth) == 0 { return build_error(id, -32602, "missing path"); }
+        let out: String = sys_exec_safe(proc, "oocat " + pth);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "list_dir" {
+        let pth: String = json_field_string(args, "path");
+        let target: String = if chars_len(pth) > 0 { pth } else { "." };
+        let out: String = sys_exec_safe(proc, "ools -la " + target);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "tree_dir" {
+        let pth: String = json_field_string(args, "path");
+        let target: String = if chars_len(pth) > 0 { pth } else { "." };
+        let out: String = sys_exec_safe(proc, "ootree " + target);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "system_fetch" {
+        let out: String = sys_exec_safe(proc, "oofetch");
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "top_metrics" {
+        let out: String = sys_exec_safe(proc, "ootop --once 2>/dev/null || ootop -c 1 2>/dev/null || oops");
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "process_table" {
+        let out: String = sys_exec_safe(proc, "oops");
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "http_request" {
+        let url: String = json_field_string(args, "url");
+        if chars_len(url) == 0 { return build_error(id, -32602, "missing url"); }
+        let out: String = sys_exec_safe(proc, "oocurl " + url);
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "clock_time" {
+        let out: String = sys_exec_safe(proc, "ooclock --once 2>/dev/null || date");
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "theme_palette" {
+        let out: String = sys_exec_safe(proc, "oote show");
+        return build_tool_result(id, out);
+    }
+
+    if tool_name == "shell_eval" {
+        let cmd: String = json_field_string(args, "command");
+        if chars_len(cmd) == 0 { return build_error(id, -32602, "missing command"); }
+        let out: String = sys_exec_safe(proc, "oosh -c '" + cmd + "'");
+        return build_tool_result(id, out);
+    }
+
+    return build_error(id, -32601, "unknown tool: " + tool_name);
+}

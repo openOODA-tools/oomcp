@@ -1,0 +1,27 @@
+// # System Tool Execution and Routing
+//
+// Logline: Dispatches command strings to host subprocesses under capability confinement.
+//
+// Setup: Demands &ProcessCap to execute child binaries.
+//
+// Beats:
+//   1. Validate non-empty command payload.
+//   2. Forward execution request to process_exec.
+//   3. Handle error results and normalize standard output payload.
+
+import "std/fs/process/process.oo";
+
+pub fn sys_route_command(proc: &ProcessCap, cmd_str: String) -> Result[String, String] {
+    if chars_len(cmd_str) == 0 {
+        return Err("empty command execution request");
+    }
+    return process_exec(proc, cmd_str);
+}
+
+pub fn sys_exec_safe(proc: &ProcessCap, cmd: String) -> String {
+    let r: Result[String, String] = sys_route_command(proc, cmd);
+    return match r {
+        Ok(out) => out,
+        Err(err) => "ERROR: " + err,
+    };
+}

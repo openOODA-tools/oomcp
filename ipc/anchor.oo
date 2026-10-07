@@ -1,0 +1,20 @@
+// # IPC Domain Anchor for oomcp
+//
+// Logline: Consolidates JSON parsing, framing, CLI parsing, dispatching, and server loop.
+//
+// Setup: Demands ProcessCap and FsReadCap for communication.
+//
+// Beats:
+//   1. Re-export CLI argument parser.
+//   2. Re-export MCP stdio loop engine and dispatch logic.
+//   3. Maintain isolated boundary for inter-process communication.
+
+import "ipc/cli_opts.oo";
+import "ipc/json_field.oo";
+import "ipc/mcp_frame.oo";
+import "ipc/dispatch.oo";
+import "ipc/mcp_serve.oo";
+
+pub fn ipc_ready() -> Bool {
+    return true;
+}

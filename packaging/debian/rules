@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	make build
+
+override_dh_auto_install:
+	install -Dm755 dist/oomcp debian/oomcp/usr/bin/oomcp
+	install -Dm755 uninstall.sh debian/oomcp/usr/bin/oomcp-uninstall

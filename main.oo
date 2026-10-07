@@ -1,0 +1,77 @@
+// # oomcp Main Entry Point - Sovereign MCP Composite Gateway
+//
+// Logline: Dispatches MCP stdio loop, CLI discovery dashboards, and aggregated tool routing.
+//
+// Setup: Requires FsReadCap, ProcessCap, and EnvCap. Zero ambient authority.
+//
+// Beats:
+//   1. Parse CLI options for subcommands (serve, list, call, schema).
+//   2. Route to discovery dashboard or aggregated schema dumper.
+//   3. Launch bidirectional Model Context Protocol stdio server loop.
+
+import "version.oo";
+import "catalog/anchor.oo";
+import "ipc/anchor.oo";
+import "render/anchor.oo";
+import "sys/anchor.oo";
+
+fn print_help() {
+    println("Usage: oomcp [COMMAND] [OPTIONS]\n\n" +
+        "Sovereign Model Context Protocol (MCP) composite gateway & tool router.\n\n" +
+        "Commands:\n" +
+        "  serve               Run bidirectional MCP JSON-RPC 2.0 server on stdio (default)\n" +
+        "  list                Discover and list all available openOODA userland tools\n" +
+        "  schema              Dump aggregated Model Context Protocol JSON schema\n" +
+        "  call <TOOL> <ARGS>  Execute specific openOODA tool call with JSON arguments\n\n" +
+        "Options:\n" +
+        "      --theme=<NAME>  Override active oote palette (1982, dracula, nord, cyberpunk)\n" +
+        "      --mcp           Alias for 'serve' mode\n" +
+        "  -h, --help          Display this help message and exit\n" +
+        "  -v, --version       Print version information and exit\n");
+}
+
+pub fn main(fs: &FsReadCap, proc: &ProcessCap, env: &EnvCap, args: List[String]) -> Result[Int, String] {
+    let opts: CliOpts = parse_cli_args(args);
+
+    if opts.show_help {
+        print_help();
+        return Ok(0);
+    }
+
+    if opts.show_version {
+        println(oomcp_banner());
+        return Ok(0);
+    }
+
+    let active_theme: String = if chars_len(opts.theme_override) > 0 {
+        opts.theme_override
+    } else {
+        resolve_oomcp_theme(fs, env)
+    };
+
+    if opts.mode == "list" {
+        let tools: List[ToolMeta] = catalog_discover_suite(proc);
+        let table: String = render_tool_dashboard(tools, active_theme);
+        print(table);
+        return Ok(0);
+    }
+
+    if opts.mode == "schema" {
+        let schema_json: String = catalog_aggregate_schemas();
+        println(schema_json);
+        return Ok(0);
+    }
+
+    if opts.mode == "call" {
+        if chars_len(opts.target_tool) == 0 {
+            println("oomcp: missing tool name operand\nTry 'oomcp --help' for more information.");
+            return Ok(1);
+        }
+        let res: String = dispatch_tool_call(proc, "cli", opts.target_tool, opts.raw_args);
+        println(res);
+        return Ok(0);
+    }
+
+    let rc: Int = run_mcp_stdio_server(proc, fs);
+    return Ok(rc);
+}

@@ -1,0 +1,11 @@
+Package: oomcp
+Version: 0.1.0-1
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: openOODA-tools <ops@openooda.org>
+Description: Sovereign Model Context Protocol composite gateway and tool router
+ A sovereign Model Context Protocol (MCP) composite gateway and tool
+ router written in pure openOODA. It aggregates all installed openOODA userland
+ tools into a unified JSON-RPC 2.0 stdio server, provides dynamic tool discovery,
+ and dispatches capability-bounded tool calls for AI coding agents.

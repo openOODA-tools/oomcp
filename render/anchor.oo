@@ -1,0 +1,17 @@
+// # Render Domain Anchor for oomcp
+//
+// Logline: Consolidates UI styling, theme loading, and dashboard reporting components.
+//
+// Setup: Imports render_theme and dashboard formatters.
+//
+// Beats:
+//   1. Re-export ANSI sequence and theme configuration tools.
+//   2. Re-export CLI status table renderer.
+//   3. Provide unified presentation layer interface.
+
+import "render/render_theme.oo";
+import "render/dashboard.oo";
+
+pub fn render_ready() -> Bool {
+    return true;
+}

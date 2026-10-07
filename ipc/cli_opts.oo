@@ -1,0 +1,65 @@
+// # Command Line Option Parser
+//
+// Logline: Decodes command line arguments into structured operational modes for oomcp.
+//
+// Setup: Pure string argument parser without ambient state.
+//
+// Beats:
+//   1. Parse subcommands: serve, list, call, schema.
+//   2. Parse flags: --help, -h, --version, -v, --theme.
+//   3. Pack into immutable CliOpts record.
+
+pub type CliOpts = struct {
+    mode: String,
+    target_tool: String,
+    raw_args: String,
+    theme_override: String,
+    show_help: Bool,
+    show_version: Bool
+};
+
+pub fn make_default_opts() -> CliOpts {
+    return CliOpts {
+        mode: "serve",
+        target_tool: "",
+        raw_args: "",
+        theme_override: "",
+        show_help: false,
+        show_version: false
+    };
+}
+
+pub fn parse_cli_args(args: List[String]) -> CliOpts {
+    let mut opts: CliOpts = make_default_opts();
+    let n: Int = list_len(args);
+    let mut i: Int = 0;
+
+    while i < n {
+        let arg: String = list_get(args, i);
+        if arg == "-h" || arg == "--help" || arg == "help" {
+            opts.show_help = true;
+        } else if arg == "-v" || arg == "--version" || arg == "version" {
+            opts.show_version = true;
+        } else if arg == "serve" || arg == "--mcp" {
+            opts.mode = "serve";
+        } else if arg == "list" || arg == "--list" {
+            opts.mode = "list";
+        } else if arg == "schema" || arg == "--schema" {
+            opts.mode = "schema";
+        } else if arg == "call" {
+            opts.mode = "call";
+            if i + 1 < n {
+                i = i + 1;
+                opts.target_tool = list_get(args, i);
+            }
+            if i + 1 < n {
+                i = i + 1;
+                opts.raw_args = list_get(args, i);
+            }
+        } else if str_starts_with(arg, "--theme=") {
+            opts.theme_override = str_slice(arg, 8, chars_len(arg));
+        }
+        i = i + 1;
+    }
+    return opts;
+}

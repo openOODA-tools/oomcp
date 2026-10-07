@@ -1,0 +1,22 @@
+// # Version Definition for oomcp
+//
+// Logline: Declares semantic version constants and branding banner for the sovereign MCP gateway.
+//
+// Setup: Standalone constants, zero external capability requirements.
+//
+// Beats:
+//   1. Expose semantic version integer components and release string.
+//   2. Provide formatted version string for CLI banner.
+//   3. Provide protocol specification version string for MCP handshakes.
+
+pub fn oomcp_version() -> String {
+    return "0.1.0";
+}
+
+pub fn oomcp_protocol_version() -> String {
+    return "2024-11-05";
+}
+
+pub fn oomcp_banner() -> String {
+    return "oomcp 0.1.0 (openOODA sovereign MCP composite gateway)";
+}

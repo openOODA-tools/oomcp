@@ -1,0 +1,55 @@
+// # Discovery Dashboard and Table Formatter
+//
+// Logline: Renders ASCII and ANSI formatted status matrices of discovered openOODA tools.
+//
+// Setup: Receives tool metadata lists and applies oote formatting.
+//
+// Beats:
+//   1. Render stylized banner and summary statistics.
+//   2. Output structured table rows for each registered tool.
+//   3. Render visual status badges (ONLINE vs NOT INSTALLED).
+
+import "catalog/tool_meta.oo";
+import "render/render_theme.oo";
+
+fn pad_right(s: String, width: Int) -> String {
+    let mut out: String = s;
+    while chars_len(out) < width {
+        out = out + " ";
+    }
+    return out;
+}
+
+pub fn render_tool_dashboard(tools: List[ToolMeta], active_theme: String) -> String {
+    let mut out: String = "";
+    out = out + term_bold() + term_cyan() + "=== openOODA Sovereign MCP Gateway (oomcp v0.1.0) ===" + term_reset() + "\n";
+    out = out + term_dim() + "Theme: " + active_theme + " | Wire: JSON-RPC 2.0 (stdio / AF_UNIX)" + term_reset() + "\n\n";
+
+    out = out + term_bold() + pad_right("TOOL IDENTIFIER", 18) + pad_right("BINARY", 12) + pad_right("CATEGORY", 12) + pad_right("STATUS", 16) + "DESCRIPTION" + term_reset() + "\n";
+    out = out + term_dim() + "--------------------------------------------------------------------------------" + term_reset() + "\n";
+
+    let n: Int = list_len(tools);
+    let mut i: Int = 0;
+    let mut online_count: Int = 0;
+
+    while i < n {
+        let t: ToolMeta = list_get(tools, i);
+        let status_str: String = if t.installed {
+            online_count = online_count + 1;
+            term_green() + "[INSTALLED]" + term_reset()
+        } else {
+            term_dim() + "[ABSENT]" + term_reset()
+        };
+
+        out = out + term_bold() + pad_right(t.name, 18) + term_reset() +
+              pad_right(t.bin_name, 12) +
+              pad_right(t.category, 12) +
+              pad_right(status_str, 25) +
+              t.description + "\n";
+        i = i + 1;
+    }
+
+    out = out + term_dim() + "--------------------------------------------------------------------------------" + term_reset() + "\n";
+    out = out + "Total Available: " + term_green() + to_string(online_count) + term_reset() + " / " + to_string(n) + " tools ready for agent delegation.\n";
+    return out;
+}

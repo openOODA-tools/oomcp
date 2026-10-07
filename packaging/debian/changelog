@@ -1,0 +1,5 @@
+oomcp (0.1.0-1) unstable; urgency=medium
+
+  * Initial sovereign release: composite MCP gateway, discovery dashboard, and unified tool dispatcher.
+
+ -- openOODA-tools <ops@openooda.org>  Wed, 07 Oct 2026 08:00:00 -1000

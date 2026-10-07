@@ -1,0 +1,9 @@
+dist/
+.ooda-cache/
+*.o
+*.a
+*.so
+*.pkg.tar.zst
+*.deb
+*.rpm
+target/

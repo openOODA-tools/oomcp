@@ -1,0 +1,38 @@
+// # Model Context Protocol Framing Engine
+//
+// Logline: Encodes and decodes standard JSON-RPC 2.0 frames for Model Context Protocol interactions.
+//
+// Setup: Pure string builders generating valid JSON-RPC envelopes.
+//
+// Beats:
+//   1. Build tool call text results wrapped in MCP content blocks.
+//   2. Build standard JSON-RPC error frames with error codes and descriptions.
+//   3. Build protocol handshake and capability response envelopes.
+
+import "version.oo";
+import "ipc/json_field.oo";
+
+pub fn build_error(id: String, code: Int, msg: String) -> String {
+    let clean_id: String = if chars_len(id) == 0 { "null" } else { id };
+    return "{\"jsonrpc\":\"2.0\",\"id\":" + clean_id + ",\"error\":{\"code\":" + to_string(code) + ",\"message\":\"" + json_escape(msg) + "\"}}";
+}
+
+pub fn build_tool_result(id: String, text: String) -> String {
+    let clean_id: String = if chars_len(id) == 0 { "null" } else { id };
+    return "{\"jsonrpc\":\"2.0\",\"id\":" + clean_id + ",\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"" + json_escape(text) + "\"}]}}";
+}
+
+pub fn build_init_result(id: String) -> String {
+    let clean_id: String = if chars_len(id) == 0 { "null" } else { id };
+    return "{\"jsonrpc\":\"2.0\",\"id\":" + clean_id + ",\"result\":{\"protocolVersion\":\"" + oomcp_protocol_version() + "\",\"capabilities\":{\"tools\":{}},\"serverInfo\":{\"name\":\"openooda-oomcp\",\"version\":\"" + oomcp_version() + "\"}}}";
+}
+
+pub fn build_tools_list_result(id: String, tools_json: String) -> String {
+    let clean_id: String = if chars_len(id) == 0 { "null" } else { id };
+    return "{\"jsonrpc\":\"2.0\",\"id\":" + clean_id + ",\"result\":{\"tools\":" + tools_json + "}}";
+}
+
+pub fn build_empty_result(id: String) -> String {
+    let clean_id: String = if chars_len(id) == 0 { "null" } else { id };
+    return "{\"jsonrpc\":\"2.0\",\"id\":" + clean_id + ",\"result\":null}";
+}

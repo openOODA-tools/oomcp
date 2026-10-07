@@ -1,0 +1,66 @@
+.TH OOMCP 1 "October 2026" "openOODA-tools v0.1.0" "User Commands"
+.SH NAME
+oomcp \- sovereign Model Context Protocol composite gateway and tool router
+.SH SYNOPSIS
+.B oomcp
+[\fBCOMMAND\fR] [\fBOPTIONS\fR]
+.SH DESCRIPTION
+.B oomcp
+is the sovereign Model Context Protocol (MCP) composite gateway and tool router for the openOODA userland suite. It provides a single, unified JSON-RPC 2.0 stdio server that aggregates all installed openOODA tools (e.g., oodiff, oogrep, oojq, oofind, oocat, ootop, oops, oocurl, oowatch, oosh), exposes their schemas to AI coding agents, and dispatches capability-bounded tool calls under strict security boundaries.
+.SH COMMANDS
+.TP
+.B serve
+Run bidirectional Model Context Protocol JSON-RPC 2.0 server over standard input and output (default mode).
+.TP
+.B list
+Inspect host execution paths ($PATH, ~/.openooda/bin, /usr/bin) and output an interactive status table of discovered openOODA userland tools.
+.TP
+.B schema
+Dump aggregated JSON Schema array of all registered openOODA tool capabilities.
+.TP
+.B call \fITOOL\fR \fIJSON_ARGS\fR
+Execute a specific tool call directly from the command line with raw JSON arguments.
+.SH OPTIONS
+.TP
+.BI \-\-theme= NAME
+Override the active oote color palette (\fBclassic\fR, \fB1982\fR, \fBdracula\fR, \fBnord\fR, \fBcyberpunk\fR).
+.TP
+.B \-\-mcp
+Explicit alias for \fBserve\fR mode.
+.TP
+.B \-h, \-\-help
+Display commandline summary and exit.
+.TP
+.B \-v, \-\-version
+Output version information and exit.
+.SH AI AGENT CONFIGURATION
+To configure \fBoomcp\fR in Claude Desktop, Cursor, Antigravity, or Syntrop:
+.PP
+.RS
+.nf
+{
+  "mcpServers": {
+    "openooda": {
+      "command": "oomcp",
+      "args": ["serve"]
+    }
+  }
+}
+.fi
+.RE
+.SH ENVIRONMENT
+.TP
+.B OODA_THEME
+Override the default 39-token semantic theme palette.
+.TP
+.B OODA_HOME
+Override base directory for openOODA configuration (~/.openooda).
+.SH SEE ALSO
+.BR oosh (1),
+.BR oodiff (1),
+.BR oogrep (1),
+.BR oojq (1),
+.BR oofind (1),
+.BR oote (1)
+.SH AUTHORS
+openOODA-tools contributors <ops@openooda.org>.

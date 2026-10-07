@@ -1,0 +1,42 @@
+// # System, Network, and Runtime Tool Schemas
+//
+// Logline: Generates Model Context Protocol JSON schema definitions for host and system operations.
+//
+// Setup: Pure string builders generating valid JSON schema blocks.
+//
+// Beats:
+//   1. Define system_fetch, top_metrics, and process_table schemas for host profiling.
+//   2. Define http_request and watch_command schemas for network and task monitoring.
+//   3. Define clock_time, theme_palette, and shell_eval schemas.
+
+pub fn schema_system_fetch() -> String {
+    return "{\"name\":\"system_fetch\",\"description\":\"Retrieve host specs, OS, CPU, memory, and hardware profile\",\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"required\":[]}}";
+}
+
+pub fn schema_top_metrics() -> String {
+    return "{\"name\":\"top_metrics\",\"description\":\"Capture instantaneous snapshot of CPU, RAM, and active processes\",\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"required\":[]}}";
+}
+
+pub fn schema_process_table() -> String {
+    return "{\"name\":\"process_table\",\"description\":\"List system processes with PID, memory, CPU, and command line\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"tree\":{\"type\":\"boolean\",\"description\":\"Render as process tree hierarchy\"}},\"required\":[]}}";
+}
+
+pub fn schema_http_request() -> String {
+    return "{\"name\":\"http_request\",\"description\":\"Send capability-bounded HTTP/1.1 request\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"Target HTTP URL\"},\"method\":{\"type\":\"string\",\"description\":\"HTTP method: GET, POST, HEAD\"},\"body\":{\"type\":\"string\",\"description\":\"Optional request payload body\"}},\"required\":[\"url\"]}}";
+}
+
+pub fn schema_watch_command() -> String {
+    return "{\"name\":\"watch_command\",\"description\":\"Execute command and observe output changes across iterations\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"command\":{\"type\":\"string\",\"description\":\"Command string to execute\"},\"count\":{\"type\":\"integer\",\"description\":\"Number of cycles to evaluate\"}},\"required\":[\"command\"]}}";
+}
+
+pub fn schema_clock_time() -> String {
+    return "{\"name\":\"clock_time\",\"description\":\"Retrieve precision digital clock time, timezone, and epoch telemetry\",\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"required\":[]}}";
+}
+
+pub fn schema_theme_palette() -> String {
+    return "{\"name\":\"theme_palette\",\"description\":\"Retrieve or inspect the active 39-token oote theme palette\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"theme\":{\"type\":\"string\",\"description\":\"Optional theme name: classic, 1982, dracula, nord, cyberpunk\"}},\"required\":[]}}";
+}
+
+pub fn schema_shell_eval() -> String {
+    return "{\"name\":\"shell_eval\",\"description\":\"Execute shell command inside sovereign capability-bounded oosh environment\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"command\":{\"type\":\"string\",\"description\":\"Shell command string\"}},\"required\":[\"command\"]}}";
+}

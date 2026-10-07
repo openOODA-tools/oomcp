@@ -1,0 +1,38 @@
+// # File and Directory Tool Schemas
+//
+// Logline: Generates Model Context Protocol JSON schema definitions for filesystem tools.
+//
+// Setup: Pure string builders generating valid JSON schema blocks.
+//
+// Beats:
+//   1. Define diff_files and diff_dirs schemas for structural diff operations.
+//   2. Define find_files, list_dir, and tree_dir schemas for directory querying.
+//   3. Define view_file and tar archive tool schemas with strict parameter typing.
+
+pub fn schema_diff_files() -> String {
+    return "{\"name\":\"diff_files\",\"description\":\"Compare two files and return unified diff with oote colors\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"path_a\":{\"type\":\"string\",\"description\":\"First file path\"},\"path_b\":{\"type\":\"string\",\"description\":\"Second file path\"}},\"required\":[\"path_a\",\"path_b\"]}}";
+}
+
+pub fn schema_diff_dirs() -> String {
+    return "{\"name\":\"diff_dirs\",\"description\":\"Compare two directory trees recursively and return unified diff\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"dir_a\":{\"type\":\"string\",\"description\":\"First directory\"},\"dir_b\":{\"type\":\"string\",\"description\":\"Second directory\"}},\"required\":[\"dir_a\",\"dir_b\"]}}";
+}
+
+pub fn schema_find_files() -> String {
+    return "{\"name\":\"find_files\",\"description\":\"Find files matching name patterns and extensions\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"root\":{\"type\":\"string\",\"description\":\"Root directory to search\"},\"pattern\":{\"type\":\"string\",\"description\":\"Glob pattern or filename match\"},\"max_depth\":{\"type\":\"integer\",\"description\":\"Maximum traversal depth\"}},\"required\":[\"root\"]}}";
+}
+
+pub fn schema_view_file() -> String {
+    return "{\"name\":\"view_file\",\"description\":\"View file contents with syntax highlighting and line numbers\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"description\":\"Path to file\"},\"start_line\":{\"type\":\"integer\",\"description\":\"Starting line range (1-indexed)\"},\"end_line\":{\"type\":\"integer\",\"description\":\"Ending line range (inclusive)\"}},\"required\":[\"path\"]}}";
+}
+
+pub fn schema_list_dir() -> String {
+    return "{\"name\":\"list_dir\",\"description\":\"List directory entries with permissions, sizes, and file types\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"description\":\"Directory path to list\"},\"all\":{\"type\":\"boolean\",\"description\":\"Show hidden files starting with dot\"}},\"required\":[\"path\"]}}";
+}
+
+pub fn schema_tree_dir() -> String {
+    return "{\"name\":\"tree_dir\",\"description\":\"Generate UTF-8 box-drawing tree representation of directory\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"description\":\"Root directory to render\"},\"depth\":{\"type\":\"integer\",\"description\":\"Maximum directory depth\"}},\"required\":[\"path\"]}}";
+}
+
+pub fn schema_tar_archive() -> String {
+    return "{\"name\":\"tar_pack\",\"description\":\"Pack directory or files into a traversal-resistant tar archive\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"archive\":{\"type\":\"string\",\"description\":\"Output archive tar path\"},\"target\":{\"type\":\"string\",\"description\":\"Directory or file to pack\"}},\"required\":[\"archive\",\"target\"]}}";
+}

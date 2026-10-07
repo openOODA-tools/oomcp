@@ -1,0 +1,78 @@
+// # Model Context Protocol Server and Stdio Loop
+//
+// Logline: Orchestrates bidirectional JSON-RPC 2.0 communication over standard input and output.
+//
+// Setup: Requires ProcessCap for tool execution and FsReadCap for stdin reads.
+//
+// Beats:
+//   1. Parse incoming JSON-RPC method, id, and params payload.
+//   2. Route initialize, tools/list, and tools/call requests.
+//   3. Run persistent standard I/O streaming loop.
+
+import "catalog/anchor.oo";
+import "ipc/json_field.oo";
+import "ipc/mcp_frame.oo";
+import "ipc/dispatch.oo";
+
+pub fn handle_mcp_message(proc: &ProcessCap, req: String) -> String {
+    let method: String = json_field_string(req, "method");
+    let raw_id: String = json_field_raw(req, "id");
+    let id: String = if chars_len(raw_id) == 0 { "null" } else { raw_id };
+
+    if method == "initialize" {
+        return build_init_result(id);
+    }
+    if method == "notifications/initialized" {
+        return "";
+    }
+    if method == "ping" {
+        return build_empty_result(id);
+    }
+    if method == "tools/list" {
+        let tools_json: String = catalog_aggregate_schemas();
+        return build_tools_list_result(id, tools_json);
+    }
+    if method == "tools/call" {
+        let params: String = json_field_raw(req, "params");
+        let tool_name: String = json_field_string(params, "name");
+        let args: String = json_field_raw(params, "arguments");
+        return dispatch_tool_call(proc, id, tool_name, args);
+    }
+    if method == "shutdown" {
+        return build_empty_result(id);
+    }
+    return build_error(id, -32601, "method not found: " + method);
+}
+
+pub fn run_mcp_stdio_server(proc: &ProcessCap, fs: &FsReadCap) -> Int {
+    let mut buf: String = "";
+    let mut running: Bool = true;
+
+    while running {
+        let r: Result[String, String] = oo_read_stdin_chunk(fs, 100);
+        if !r.is_ok() {
+            running = false;
+        } else {
+            let chunk: String = match r { Ok(s) => s, Err(_) => "" };
+            if chars_len(chunk) == 0 {
+                running = false;
+            } else {
+                buf = buf + chunk;
+                let mut nl_pos: Int = str_index_of(buf, "\n");
+                while nl_pos >= 0 {
+                    let line: String = str_slice(buf, 0, nl_pos);
+                    buf = str_slice(buf, nl_pos + 1, chars_len(buf));
+                    let trimmed: String = str_trim(line);
+                    if chars_len(trimmed) > 0 {
+                        let reply: String = handle_mcp_message(proc, trimmed);
+                        if chars_len(reply) > 0 {
+                            println(reply);
+                        }
+                    }
+                    nl_pos = str_index_of(buf, "\n");
+                }
+            }
+        }
+    }
+    return 0;
+}

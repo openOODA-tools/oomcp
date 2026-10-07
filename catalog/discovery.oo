@@ -1,0 +1,44 @@
+// # Tool Discovery Engine
+//
+// Logline: Probes host execution environment to discover installed openOODA userland tools.
+//
+// Setup: Demands &ProcessCap capability to test binary availability.
+//
+// Beats:
+//   1. Execute host probe using which command for a given binary.
+//   2. Check if binary returns cleanly with non-empty path.
+//   3. Build registry of discovered tools matching known openOODA capabilities.
+
+import "std/fs/process/process.oo";
+import "catalog/tool_meta.oo";
+
+pub fn probe_binary_exists(proc: &ProcessCap, bin_name: String) -> Bool {
+    let r: Result[String, String] = process_exec(proc, "which " + bin_name + " 2>/dev/null");
+    if !r.is_ok() {
+        return false;
+    }
+    let out: String = match r {
+        Ok(s) => s,
+        Err(_) => "",
+    };
+    return chars_len(str_trim(out)) > 0;
+}
+
+pub fn probe_tool(proc: &ProcessCap, name: String, bin_name: String, desc: String, cat: String) -> ToolMeta {
+    let inst: Bool = probe_binary_exists(proc, bin_name);
+    return make_tool_meta(name, bin_name, desc, cat, inst);
+}
+
+pub fn count_installed_tools(tools: List[ToolMeta]) -> Int {
+    let n: Int = list_len(tools);
+    let mut count: Int = 0;
+    let mut i: Int = 0;
+    while i < n {
+        let t: ToolMeta = list_get(tools, i);
+        if t.installed {
+            count = count + 1;
+        }
+        i = i + 1;
+    }
+    return count;
+}
