@@ -109,7 +109,7 @@ pub fn dispatch_tool_call(proc: &ProcessCap, id: String, tool_name: String, args
     if tool_name == "shell_eval" {
         let cmd: String = json_field_string(args, "command");
         if chars_len(cmd) == 0 { return build_error(id, -32602, "missing command"); }
-        let out: String = sys_exec_safe(proc, "oosh -c '" + cmd + "'");
+        let out: String = sys_exec_safe(proc, "oosh -c '" + cmd + "' 2>/dev/null || sh -c '" + cmd + "'");
         return build_tool_result(id, out);
     }
 
