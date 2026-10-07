@@ -2,63 +2,16 @@
 //
 // Logline: Consolidates metadata registries, system probes, and aggregated schema builders.
 //
-// Setup: Demands &ProcessCap to run environment binary discovery.
+// Setup: Re-exports catalog domain modules.
 //
 // Beats:
-//   1. Build full metadata list of all 19 sovereign openOODA userland tools.
-//   2. Probe system availability to determine installed status.
-//   3. Aggregate individual JSON schemas into a single tools/list response payload.
+//   1. Re-export tool metadata and discovery probes.
+//   2. Re-export category-specific JSON schemas.
+//   3. Re-export aggregated discovery suite and schema builder.
 
 import "catalog/tool_meta.oo";
 import "catalog/discovery.oo";
 import "catalog/schema_files.oo";
 import "catalog/schema_text.oo";
 import "catalog/schema_sys.oo";
-
-pub fn catalog_discover_suite(proc: &ProcessCap) -> List[ToolMeta] {
-    let mut tools: List[ToolMeta] = list_new();
-    tools = list_push(tools, probe_tool(proc, "diff_files", "oodiff", "AST structural file comparison", "diff"));
-    tools = list_push(tools, probe_tool(proc, "grep_pattern", "oogrep", "Fast regex pattern search", "search"));
-    tools = list_push(tools, probe_tool(proc, "jq_query", "oojq", "Streaming JSON processor", "data"));
-    tools = list_push(tools, probe_tool(proc, "find_files", "oofind", "Bounded directory walker", "search"));
-    tools = list_push(tools, probe_tool(proc, "view_file", "oocat", "Syntax-highlighting viewer", "inspect"));
-    tools = list_push(tools, probe_tool(proc, "system_fetch", "oofetch", "Host hardware profiler", "system"));
-    tools = list_push(tools, probe_tool(proc, "top_metrics", "ootop", "Resource & process monitor", "system"));
-    tools = list_push(tools, probe_tool(proc, "process_table", "oops", "Process hierarchy viewer", "system"));
-    tools = list_push(tools, probe_tool(proc, "fuzzy_match", "oofzf", "Interactive fuzzy search", "search"));
-    tools = list_push(tools, probe_tool(proc, "list_dir", "ools", "Modern directory lister", "files"));
-    tools = list_push(tools, probe_tool(proc, "tree_dir", "ootree", "Directory hierarchy tree", "files"));
-    tools = list_push(tools, probe_tool(proc, "stream_edit", "oosed", "Stream text editor", "text"));
-    tools = list_push(tools, probe_tool(proc, "tar_pack", "ootar", "Archive packer/unpacker", "files"));
-    tools = list_push(tools, probe_tool(proc, "http_request", "oocurl", "Bounded HTTP client", "net"));
-    tools = list_push(tools, probe_tool(proc, "watch_command", "oowatch", "Continuous command monitor", "system"));
-    tools = list_push(tools, probe_tool(proc, "clock_time", "ooclock", "Matrix digital clock", "system"));
-    tools = list_push(tools, probe_tool(proc, "theme_palette", "oote", "39-token theme authority", "theme"));
-    tools = list_push(tools, probe_tool(proc, "shell_eval", "oosh", "Sovereign interactive shell", "shell"));
-    return tools;
-}
-
-pub fn catalog_aggregate_schemas() -> String {
-    let mut s: String = "[";
-    s = s + schema_diff_files() + ",";
-    s = s + schema_diff_dirs() + ",";
-    s = s + schema_find_files() + ",";
-    s = s + schema_view_file() + ",";
-    s = s + schema_list_dir() + ",";
-    s = s + schema_tree_dir() + ",";
-    s = s + schema_tar_archive() + ",";
-    s = s + schema_grep_pattern() + ",";
-    s = s + schema_jq_query() + ",";
-    s = s + schema_stream_edit() + ",";
-    s = s + schema_fuzzy_match() + ",";
-    s = s + schema_system_fetch() + ",";
-    s = s + schema_top_metrics() + ",";
-    s = s + schema_process_table() + ",";
-    s = s + schema_http_request() + ",";
-    s = s + schema_watch_command() + ",";
-    s = s + schema_clock_time() + ",";
-    s = s + schema_theme_palette() + ",";
-    s = s + schema_shell_eval();
-    s = s + "]";
-    return s;
-}
+import "catalog/aggregate.oo";
