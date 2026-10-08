@@ -3,7 +3,7 @@
 > **Sovereign Model Context Protocol (MCP) Composite Gateway & Tool Router**  
 > *The unified agentic nervous system for the openOODA sovereign userland.*
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](VERSION)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](VERSION)
 [![Language](https://img.shields.io/badge/language-100%25%20openOODA-green.svg)](https://github.com/openOODA)
 [![Security](https://img.shields.io/badge/authority-zero%20ambient-brightgreen.svg)](AGENTS.md)
 [![Citizenship](https://img.shields.io/badge/systemd-native%20citizen-blue.svg)](AGENTS.md)

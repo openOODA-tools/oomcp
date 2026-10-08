@@ -10,7 +10,7 @@
 //   3. Provide protocol specification version string for MCP handshakes.
 
 pub fn oomcp_version() -> String {
-    return "0.1.0";
+    return "0.2.0";
 }
 
 pub fn oomcp_protocol_version() -> String {
@@ -18,5 +18,5 @@ pub fn oomcp_protocol_version() -> String {
 }
 
 pub fn oomcp_banner() -> String {
-    return "oomcp 0.1.0 (openOODA sovereign MCP composite gateway)";
+    return "oomcp 0.2.0 (openOODA sovereign MCP composite gateway)";
 }
