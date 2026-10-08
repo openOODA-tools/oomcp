@@ -22,7 +22,7 @@ fn pad_right(s: String, width: Int) -> String {
 
 pub fn render_tool_dashboard(tools: List[ToolMeta], active_theme: String) -> String {
     let mut out: String = "";
-    out = out + term_bold() + term_cyan() + "=== openOODA Sovereign MCP Gateway (oomcp v0.1.0) ===" + term_reset() + "\n";
+    out = out + term_bold() + term_cyan() + "=== openOODA Sovereign MCP Gateway (oomcp v0.2.0) ===" + term_reset() + "\n";
     out = out + term_dim() + "Theme: " + active_theme + " | Wire: JSON-RPC 2.0 (stdio / AF_UNIX)" + term_reset() + "\n\n";
 
     out = out + term_bold() + pad_right("TOOL IDENTIFIER", 18) + pad_right("BINARY", 12) + pad_right("CATEGORY", 12) + pad_right("STATUS", 16) + "DESCRIPTION" + term_reset() + "\n";

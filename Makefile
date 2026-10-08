@@ -166,6 +166,11 @@ package-arch: $(BIN)
 	@echo "built dist/oomcp-$(VERSION)-1-x86_64.pkg.tar.zst and validated PKGBUILD"
 
 package: package-deb package-rpm package-arch
+	@cp $(BIN) dist/oomcp-linux-x86_64
+	@chmod 0755 dist/oomcp-linux-x86_64
+	@(cd dist && sha256sum oomcp-linux-x86_64 > oomcp-linux-x86_64.sha256)
+	@(cd dist && sha256sum oomcp* > checksums.txt)
+	@echo "built all packages and generated dist/checksums.txt"
 
 clean:
 	@rm -rf dist .ooda-cache .blackbox
